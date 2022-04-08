@@ -4,100 +4,78 @@ let gamePattern = [];
 let userPattern = [];
 const gameColors = ["green", "red", "yellow", "blue"];
 let level = 0;
-let old = document.querySelector("h2").innerHTML;
+const sound = new Audio(`sounds/green.mp3`);
+const wrong = new Audio("sounds/wrong.mp3");
 
-document.body.addEventListener("keypress", playGame);
-// just at the beggining
+//PLAYGAME
 function playGame() {
-  //reset parameters (arrays, level,etc);
+  document.querySelector("#overlay").style.display = "none";
   level = 0;
-  userPattern = [];
   gamePattern = [];
-  //start sequence
   nextSequence();
-  //disable keypress
-  document.body.removeEventListener("keypress", playGame);
-  //userchoice
-  console.log(`testing if ${gamePattern} appears first`);
-  for (let color of gameColors) {
-    document.querySelector(`.${color}`).addEventListener("click", function () {
-      btnActivation(`${color}`);
-      //push user choice to userPattern array
-      userPattern.push(color);
-      console.log(userPattern);
-      console.log(gamePattern);
-      if (userPattern.length > 0) {
-        if (userPattern.length === gamePattern.length) {
-          console.log("is checking answer");
-          checkAnswer();
-        }
-      }
-    });
-  }
+}
+//NEXT SEQUENCE
+const nextSequence = function () {
+  document.querySelector(
+    "h2"
+  ).innerHTML = `<h2 class="detach">LEVEL ${level}</span></h2>`;
+  userPattern = [];
+  let index = Math.round(Math.random() * 3);
+  let randomChosenColour = gameColors[index];
+  gamePattern.push(randomChosenColour);
+  animatePress(randomChosenColour);
+};
+function animatePress(buttoncolor) {
+  let button = document.querySelector(`#${buttoncolor}`);
+  button.classList.remove("hidden");
+  sound.play();
+  setTimeout(() => button.classList.add("hidden"), 200);
 }
 
-const btnActivation = function (color) {
-  const sound = new Audio(`sounds/${color}.mp3`);
-  document.querySelector(`#${color}`).classList.remove("hidden");
-  sound.play();
-  function Hide() {
-    document.querySelector(`#${color}`).classList.add("hidden");
-  }
-  setTimeout(Hide, 250);
-};
+function userChoice(e) {
+  let colorClicked = e.target.classList[1];
+  animatePress(colorClicked);
+  userPattern.push(colorClicked);
+  checkAnswer(userPattern.length - 1);
+}
 
-function previousPattern() {
-  if (gamePattern.length > 0) {
-    for (let i of gamePattern) {
-      SetTimeout(function () {
-        btnActivation(i);
-      }, 500);
+for (let button of gameColors) {
+  document.querySelector(`.${button}`).addEventListener("click", userChoice);
+}
+
+//CHECK
+function checkAnswer(currentlevel) {
+  if (userPattern[currentlevel] === gamePattern[currentlevel]) {
+    if (userPattern.length === gamePattern.length) {
+      previousPattern();
+      level++;
     }
   } else {
-    return;
+    return gameOver();
   }
 }
+//GAMEOVER
+function gameOver() {
+  wrong.play();
+  //add eventlistener to restart the game
+  document.body.addEventListener("keypress", playGame);
+  //display an overlay GAME OVER SETUP.
+  document.querySelector("#overlay").style.display = "block";
+  document.querySelector("h2").innerHTML =
+    '<h2><span class="detach"> Lost at level: ' + level + "</span></h2>";
+}
+//START
+document.body.addEventListener("keypress", playGame);
 
-const nextSequence = function () {
-  //level up
-  level++;
-  let levels = document.querySelector("h2");
-  levels.innerHTML = `<span class="detach">Level ${level}</span>`;
-  //repeat previous array from the game
-  //previousPattern();
-  //generates a new step bottom activation
-  let index = Math.round(Math.random() * 3);
-  // get the color from the gameColors array
-  let colorPicked = gameColors[index];
-  setTimeout(function () {
-    btnActivation(colorPicked);
-  }, 500);
-  //store this new btn activation in the game sequence
-  gamePattern.push(colorPicked);
-  // make 4 color buttons clickable
-};
-
-function checkAnswer() {
-  //if (userPattern.length === gameColors.length) {
-  for (let i = 0; i < gamePattern.length; i++) {
-    if (userPattern[i] === gamePattern[i]) {
-      console.log(`Pair ${i} equal`);
-    } else {
-      console.log(`pair ${i} NOT 🤬`);
-      gameOver();
-      return false;
+function previousPattern() {
+  //loop over the gamePatter in order to show the iteration 0.5 second gap.
+  for (let i = 1; i <= gamePattern.length; i++) {
+    setTimeout(() => {
+      animatePress(gamePattern[i - 1]);
+    }, 500 * i);
+    console.log(gamePattern.length, gamePattern);
+    if (i === gamePattern.length) {
+      return setTimeout(nextSequence, 1000 * i);
     }
   }
 }
-
-function gameOver() {
-  console.log("wrong");
-  document.body.addEventListener("keypress", init);
-}
-//initiate game pressing any key.
-
-//game over should give u the button to restart game
-
-//start sequence after 1 sec of pressong key
-
-//nextSequence();
