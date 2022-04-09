@@ -24,6 +24,9 @@ const nextSequence = function () {
   let randomChosenColour = gameColors[index];
   gamePattern.push(randomChosenColour);
   animatePress(randomChosenColour);
+  for (let button of gameColors) {
+    document.querySelector(`.${button}`).addEventListener("click", userChoice);
+  }
 };
 function animatePress(buttoncolor) {
   let button = document.querySelector(`#${buttoncolor}`);
@@ -39,16 +42,14 @@ function userChoice(e) {
   checkAnswer(userPattern.length - 1);
 }
 
-for (let button of gameColors) {
-  document.querySelector(`.${button}`).addEventListener("click", userChoice);
-}
-
 //CHECK
 function checkAnswer(currentlevel) {
   if (userPattern[currentlevel] === gamePattern[currentlevel]) {
     if (userPattern.length === gamePattern.length) {
-      previousPattern();
       level++;
+      setTimeout(() => {
+        previousPattern();
+      }, 500);
     }
   } else {
     return gameOver();
@@ -61,21 +62,24 @@ function gameOver() {
   document.body.addEventListener("keypress", playGame);
   //display an overlay GAME OVER SETUP.
   document.querySelector("#overlay").style.display = "block";
-  document.querySelector("h2").innerHTML =
-    '<h2><span class="detach"> Lost at level: ' + level + "</span></h2>";
 }
 //START
 document.body.addEventListener("keypress", playGame);
 
 function previousPattern() {
+  for (let button of gameColors) {
+    document
+      .querySelector(`.${button}`)
+      .removeEventListener("click", userChoice);
+  }
   //loop over the gamePatter in order to show the iteration 0.5 second gap.
   for (let i = 1; i <= gamePattern.length; i++) {
     setTimeout(() => {
       animatePress(gamePattern[i - 1]);
-    }, 500 * i);
+    }, 1000 * i);
     console.log(gamePattern.length, gamePattern);
     if (i === gamePattern.length) {
-      return setTimeout(nextSequence, 1000 * i);
+      return setTimeout(nextSequence, 1000 * (i + 1));
     }
   }
 }
