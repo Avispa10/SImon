@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300&family=Russo+One&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <title>My First Simon</title>
+  </head>
+  <body>
+    <div id="overlay">
+      GAME OVER<br /><span class="subtitle"
+        >Press ANY KEY if u want to Start Over</span
+      >
+    </div>
+    <header>
+      <h1>WANNA PLAY?</h1>
+      <h2>Press ANY KEY to <span class="detach" id='start'>Start the Game</span></h2>
+    </header>
+    <main>
+      <div class="pannel left"></div>
+      <div class="plate">
+        <div class="square green">
+          <img class="hidden" id="green" src="images/green_on.png" />
+        </div>
+        <div class="square red">
+          <img class="hidden" id="red" src="images/red_on.png" />
+        </div>
+        <div class="square yellow">
+          <img class="hidden" id="yellow" src="images/yellow_on.png" />
+        </div>
+        <div class="square blue">
+          <img class="hidden" id="blue" src="images/blue_on.png" />
+        </div>
+      </div>
+      <div class="pannel right"></div>
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html>
